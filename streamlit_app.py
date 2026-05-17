@@ -65,7 +65,9 @@ medicaid = short_florida_claims[(short_florida_claims['Insurance Type'] == 'Medi
 
 # Row A
 st.markdown('### Metrics')
+
 col1, col2, col3, col4 = st.columns(4)
+
 col1.metric("Average Age", average_age)
 col2.metric("Most Common Procedure", common_procedure)
 col3.metric("Total Claimed Amount", total_amount_claim)
@@ -80,3 +82,4 @@ ax.set_title('Average Approved/Claim Ratio by Procedure Code and Insurance Type'
 ax.set_xlabel('Insurance Type')
 ax.set_ylabel('Procedure Code', rotation = 0)
 st.pyplot(fig)
+
