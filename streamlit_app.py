@@ -27,10 +27,28 @@ short_florida_claims = florida_claims[['Patient Age', 'Patient Gender','Diagnosi
 # appending the approved/claim ratio to our dataset
 short_florida_claims['Approved/Claim Ratio'] = short_florida_claims['Approved Amount'] / short_florida_claims['Claim Amount']
 
+# SIDEBAR CODE
 with open('style.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
     
+# STACKED BAR PARAMETER SIDEBAR  
+st.sidebar.subheader('Stacked Bar Parameter')
+insurance_options = st.sidebar.multiselect(
+    "Select Insurance Types",
+    options=short_florida_claims["Insurance Type"].unique(),
+    default=short_florida_claims["Insurance Type"].unique()[:1],
+    max_selections=3
+)
 
+filtered_counts = short_florida_claims[
+    short_florida_claims["Insurance Type"].isin(insurance_options)
+]
+
+counts = (
+    filtered_counts.groupby(['Procedure Code', 'Insurance Type']).size().unstack(fill_value=0)
+)
+
+# PIE CHART SIDEBAR AND FILTERING
 st.sidebar.subheader('Pie Chart Parameter')
 insurance_type = st.sidebar.selectbox('Select Data', ('Medicare', 'Medicaid', 'Private')) 
 
@@ -49,50 +67,18 @@ pie_data = pd.DataFrame({
     "Amount": [total_claimed, total_approved]
 })
 
-st.sidebar.subheader('Stacked Bar Parameter')
-insurance_options = st.sidebar.multiselect(
-    "Select Insurance Types",
-    options=short_florida_claims["Insurance Type"].unique(),
-    default=short_florida_claims["Insurance Type"].unique()[:1],
-    max_selections=3
-)
 
-filtered_counts = short_florida_claims[
-    short_florida_claims["Insurance Type"].isin(insurance_options)
-]
-
-counts = (
-    filtered_counts.groupby(['Procedure Code', 'Insurance Type']).size().unstack(fill_value=0)
-)
-# donut_theta = st.sidebar.selectbox('Select data', ('q2', 'q3'))
-
-# st.sidebar.subheader('Line chart parameters')
-# plot_data = st.sidebar.multiselect('Select data', ['temp_min', 'temp_max'], ['temp_min', 'temp_max'])
-# plot_height = st.sidebar.slider('Specify plot height', 200, 500, 250)
-
+### DASHBOARD
 st.title("Florida Healthcare Dashboard")
 
-# beginning metric code (average age, most common procedure code, total claim amount, total approved amount)
-average_age = short_florida_claims['Patient Age'].mean().round();
-average_age = average_age.astype(int);
-
-common_procedure = short_florida_claims['Procedure Code'].mode()[0]
-# common_procedure = print(common_procedure);
-
-total_amount_claim = short_florida_claims['Claim Amount'].sum().round(2)
-# total_amount_claim = total_amount_claim.astype(int);
-
-total_amount_approved = short_florida_claims['Approved Amount'].sum().round(2)
-# total_amount_approved = total_amount_approved.astype(int);
-
-# finding the average approved/claimed amount per procedure code per insurance
-grouped_mean = short_florida_claims.groupby(['Procedure Code', 'Insurance Type'])['Approved/Claim Ratio'].mean().unstack()
-
-# limiting insurance to medicaid and procedure code to 93000
-# medicaid = short_florida_claims[(short_florida_claims['Insurance Type'] == 'Medicaid') & (short_florida_claims['Procedure Code'] == 93000)].reset_index(drop = False)
-
-
 # Row A
+
+# beginning metric code (average age, most common procedure code, total claim amount, total approved amount)
+average_age = short_florida_claims['Patient Age'].mean().round().astype(int);
+common_procedure = short_florida_claims['Procedure Code'].mode()[0]
+total_amount_claim = short_florida_claims['Claim Amount'].sum().round(2)
+total_amount_approved = short_florida_claims['Approved Amount'].sum().round(2)
+
 st.markdown('### Metrics')
 
 col1, col2, col3, col4 = st.columns(4)
@@ -117,11 +103,6 @@ with col21:
 
     st.pyplot(fig)
 
-
-## Time of approved/claimed with differing insurance types
-
-# Total claimed vs. total approved per insurance type and procedure code (pie chart)
-
 # Pie Chart 
 with col22:
     st.markdown(f"### Claim vs. Approved Amount for {insurance_type}")
@@ -137,6 +118,9 @@ with col22:
     st.pyplot(fig)
 
 # Row C
+# finding the average approved/claimed amount per procedure code per insurance
+grouped_mean = short_florida_claims.groupby(['Procedure Code', 'Insurance Type'])['Approved/Claim Ratio'].mean().unstack()
+
 st.markdown('### Average Approved/Claim Ratio')
 fig, ax = plt.subplots(figsize=(6, 4))
 sns.heatmap(grouped_mean, annot = True, fmt = '.2f', cmap = 'Blues', ax = ax)
