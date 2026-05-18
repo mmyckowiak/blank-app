@@ -107,14 +107,17 @@ col4.metric("Total Approved Amount", f"${total_amount_approved}")
 # Row B
 col21, col22 = st.columns(2)
 with col21:
+    st.markdown("### Distribution of Procedure Codes by Insurance Types")
 
-    st.markdown('### Average Approved/Claim Ratio')
-    fig, ax = plt.subplots(figsize=(10, 6))
-    sns.heatmap(grouped_mean, annot = True, fmt = '.2f', cmap = 'Blues', ax = ax)
-    ax.set_xlabel('Insurance Type')
-    ax.set_ylabel('Procedure Code')
-    ax.set_yticklabels(['99214', '99213', '97110', '93000', '87086', '85025', '80053', '71046', '36415'], rotation = 45)
+    fig, ax = plt.subplots(figsize=(10,6))
+    counts.plot(kind="bar", stacked=True, ax=ax)
+
+    ax.set_xlabel("Procedure Code")
+    ax.set_ylabel("Counts")
+    ax.legend(title="Insurance Type")
+
     st.pyplot(fig)
+
 
 ## Time of approved/claimed with differing insurance types
 
@@ -135,13 +138,10 @@ with col22:
     st.pyplot(fig)
 
 # Row C
-st.markdown("### Distribution of Procedure Codes by Insurance Types")
-
-fig, ax = plt.subplots(figsize=(10,6))
-counts.plot(kind="bar", stacked=True, ax=ax)
-
-ax.set_xlabel("Procedure Code")
-ax.set_ylabel("Counts")
-ax.legend(title="Insurance Type")
-
+st.markdown('### Average Approved/Claim Ratio')
+fig, ax = plt.subplots(figsize=(10, 6))
+sns.heatmap(grouped_mean, annot = True, fmt = '.2f', cmap = 'Blues', ax = ax)
+ax.set_xlabel('Insurance Type')
+ax.set_ylabel('Procedure Code')
+ax.set_yticklabels(['99214', '99213', '97110', '93000', '87086', '85025', '80053', '71046', '36415'], rotation = 45)
 st.pyplot(fig)
