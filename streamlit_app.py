@@ -139,7 +139,7 @@ with col22:
 
 # Row C
 st.markdown('### Average Approved/Claim Ratio')
-fig, ax = plt.subplots(figsize=(10, 6))
+fig, ax = plt.subplots(figsize=(8, 5))
 sns.heatmap(grouped_mean, annot = True, fmt = '.2f', cmap = 'Blues', ax = ax)
 ax.set_xlabel('Insurance Type')
 ax.set_ylabel('Procedure Code')
