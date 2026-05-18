@@ -8,7 +8,7 @@ import seaborn as sns
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 
 # importing data
-data = pd.read_csv('/workspaces/blank-app/healthcare_fraud_detection.csv')
+data = pd.read_csv('healthcare_fraud_detection.csv')
 data = pd.DataFrame(data)
 print(data)
 
