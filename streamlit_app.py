@@ -10,7 +10,7 @@ st.set_page_config(layout='wide', initial_sidebar_state='auto')
 # importing data
 data = pd.read_csv('healthcare_fraud_detection.csv')
 data = pd.DataFrame(data)
-print(data)
+# print(data)
 
 # cleaning column names and data types
 columns = data.columns.str.replace('_', ' ')
@@ -50,14 +50,28 @@ pie_data = pd.DataFrame({
     "Amount": [total_claimed, total_approved]
 })
 
-# st.sidebar.subheader('Donut chart parameter')
+st.sidebar.subheader('Stacked Bar Parameter')
+insurance_options = st.sidebar.multiselect(
+    "Select Insurance Types",
+    options=short_florida_claims["Insurance Type"].unique(),
+    default=short_florida_claims["Insurance Type"].unique()[:1],
+    max_selections=3
+)
+
+filtered_counts = short_florida_claims[
+    short_florida_claims["Insurance Type"].isin(insurance_options)
+]
+
+counts = (
+    filtered_counts.groupby(['Procedure Code', 'Insurance Type']).size().unstack(fill_value=0)
+)
 # donut_theta = st.sidebar.selectbox('Select data', ('q2', 'q3'))
 
 # st.sidebar.subheader('Line chart parameters')
 # plot_data = st.sidebar.multiselect('Select data', ['temp_min', 'temp_max'], ['temp_min', 'temp_max'])
 # plot_height = st.sidebar.slider('Specify plot height', 200, 500, 250)
 
-st.title("Healthcare Dashboard")
+st.title("Florida Healthcare Dashboard")
 
 # beginning metric code (average age, most common procedure code, total claim amount, total approved amount)
 average_age = short_florida_claims['Patient Age'].mean().round();
@@ -119,3 +133,15 @@ with col22:
     )
     ax.axis("equal")
     st.pyplot(fig)
+
+# Row C
+st.markdown("### Distribution of Procedure Codes by Insurance Types")
+
+fig, ax = plt.subplot(figsize=(10,6))
+counts.plot(kind="bar", stacked=True, ax=ax)
+
+ax.set_xlabel("Procedure Code")
+ax.set_ylabel("Counts")
+ax.legend(title="Insurance Type")
+
+st.pyplot(fig)
