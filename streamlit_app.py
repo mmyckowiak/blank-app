@@ -137,7 +137,7 @@ with col22:
 # Row C
 st.markdown("### Distribution of Procedure Codes by Insurance Types")
 
-fig, ax = plt.subplot(figsize=(10,6))
+fig, ax = plt.subplots(figsize=(10,6))
 counts.plot(kind="bar", stacked=True, ax=ax)
 
 ax.set_xlabel("Procedure Code")
