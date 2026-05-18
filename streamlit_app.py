@@ -30,7 +30,6 @@ short_florida_claims['Approved/Claim Ratio'] = short_florida_claims['Approved Am
 with open('style.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
     
-st.sidebar.header('Dashboard `version 2`')
 
 st.sidebar.subheader('Pie Chart Parameter')
 insurance_type = st.sidebar.selectbox('Select Data', ('Medicare', 'Medicaid', 'Private')) 
