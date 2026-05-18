@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Page Configuration
-st.set_page_config(layout='wide', initial_sidebar_state='expanded')
+st.set_page_config(layout='wide', initial_sidebar_state='auto')
 
 # importing data
 data = pd.read_csv('healthcare_fraud_detection.csv')
@@ -66,11 +66,11 @@ average_age = average_age.astype(int);
 common_procedure = short_florida_claims['Procedure Code'].mode()[0]
 # common_procedure = print(common_procedure);
 
-total_amount_claim = short_florida_claims['Claim Amount'].sum().round()
-total_amount_claim = total_amount_claim.astype(int);
+total_amount_claim = short_florida_claims['Claim Amount'].sum().round(2)
+# total_amount_claim = total_amount_claim.astype(int);
 
-total_amount_approved = short_florida_claims['Approved Amount'].sum().round()
-total_amount_approved = total_amount_approved.astype(int);
+total_amount_approved = short_florida_claims['Approved Amount'].sum().round(2)
+# total_amount_approved = total_amount_approved.astype(int);
 
 # finding the average approved/claimed amount per procedure code per insurance
 grouped_mean = short_florida_claims.groupby(['Procedure Code', 'Insurance Type'])['Approved/Claim Ratio'].mean().unstack()
@@ -84,22 +84,23 @@ st.markdown('### Metrics')
 
 col1, col2, col3, col4 = st.columns(4)
 
-col1.metric("Average Age", average_age)
+col1.metric("Average Age", f"{average_age} yrs")
 col2.metric("Most Common Procedure", common_procedure)
-col3.metric("Total Claimed Amount", total_amount_claim)
-col4.metric("Total Approved Amount", total_amount_approved)
+col3.metric("Total Claimed Amount", f"${total_amount_claim}")
+col4.metric("Total Approved Amount", f"${total_amount_approved}")
 
 
 # Row B
 col21, col22 = st.columns(2)
-st.markdown('## Average Approved/Claim Ratio by Procedure Code and Insurance Type')
-fig, ax = plt.subplots(figsize=(10, 6))
-sns.heatmap(grouped_mean, annot = True, fmt = '.2f', cmap = 'Blues', ax = ax)
-ax.set_title('Average Approved/Claim Ratio by Procedure Code and Insurance Type')
-ax.set_xlabel('Insurance Type')
-ax.set_ylabel('Procedure Code')
-ax.set_yticklabels(['99214', '99213', '97110', '93000', '87086', '85025', '80053', '71046', '36415'], rotation = 45)
-col21.pyplot(fig)
+with col21:
+
+    st.markdown('### Average Approved/Claim Ratio')
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.heatmap(grouped_mean, annot = True, fmt = '.2f', cmap = 'Blues', ax = ax)
+    ax.set_xlabel('Insurance Type')
+    ax.set_ylabel('Procedure Code')
+    ax.set_yticklabels(['99214', '99213', '97110', '93000', '87086', '85025', '80053', '71046', '36415'], rotation = 45)
+    st.pyplot(fig)
 
 ## Time of approved/claimed with differing insurance types
 
@@ -107,7 +108,7 @@ col21.pyplot(fig)
 
 # Pie Chart 
 with col22:
-    st.markdown(f"## Claim vs. Approved Amount for {insurance_type}")
+    st.markdown(f"### Claim vs. Approved Amount for {insurance_type}")
 
     fig, ax = plt.subplots(figsize=(5,5))
     ax.pie(
